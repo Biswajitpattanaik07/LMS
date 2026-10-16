@@ -6,6 +6,13 @@ import User from "../models/userModel.js"
 
 import sendMail from "../configs/Mail.js"
 
+// Cookie settings that work between Vercel (frontend) and Render (backend)
+const cookieOptions = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 7 * 24 * 60 * 60 * 1000
+}
 
 export const signUp=async (req,res)=>{
  
@@ -32,12 +39,7 @@ export const signUp=async (req,res)=>{
            
             })
         let token = await genToken(user._id)
-        res.cookie("token",token,{
-            httpOnly:true,
-            secure:false,
-            sameSite: "Strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        })
+        res.cookie("token",token,cookieOptions)
         return res.status(201).json(user)
 
     } catch (error) {
@@ -58,12 +60,7 @@ export const login=async(req,res)=>{
             return res.status(400).json({message:"incorrect Password"})
         }
         let token =await genToken(user._id)
-        res.cookie("token",token,{
-            httpOnly:true,
-            secure:false,
-            sameSite: "Strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        })
+        res.cookie("token",token,cookieOptions)
         return res.status(200).json(user)
 
     } catch (error) {
@@ -77,7 +74,11 @@ export const login=async(req,res)=>{
 
 export const logOut = async(req,res)=>{
     try {
-        await res.clearCookie("token")
+        await res.clearCookie("token",{
+            httpOnly:true,
+            secure:true,
+            sameSite:"none"
+        })
         return res.status(200).json({message:"logOut Successfully"})
     } catch (error) {
         return res.status(500).json({message:`logout Error ${error}`})
@@ -95,12 +96,7 @@ export const googleSignup = async (req,res) => {
         })
         }
         let token =await genToken(user._id)
-        res.cookie("token",token,{
-            httpOnly:true,
-            secure:false,
-            sameSite: "Strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        })
+        res.cookie("token",token,cookieOptions)
         return res.status(200).json(user)
 
 
