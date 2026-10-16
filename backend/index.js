@@ -11,14 +11,16 @@ import aiRouter from "./routes/aiRoute.js"
 import reviewRouter from "./routes/reviewRoute.js"
 dotenv.config()
 
-let port = process.env.PORT
+let port = process.env.PORT || 8000
 let app = express()
+
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin:"http://localhost:5173",
-    credentials:true
+    origin: ["http://localhost:5173", "https://lms-one-lyart.vercel.app"],
+    credentials: true
 }))
+
 app.use("/api/auth", authRouter)
 app.use("/api/user", userRouter)
 app.use("/api/course", courseRouter)
@@ -26,13 +28,11 @@ app.use("/api/payment", paymentRouter)
 app.use("/api/ai", aiRouter)
 app.use("/api/review", reviewRouter)
 
-
-app.get("/" , (req,res)=>{
+app.get("/", (req, res) => {
     res.send("Hello From Server")
 })
 
-app.listen(port , ()=>{
+app.listen(port, () => {
     console.log("Server Started")
     connectDb()
 })
-
